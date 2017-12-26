@@ -22,7 +22,7 @@ func (w *worker) start() {
 
 			select {
 			case job = <-w.jobChannel:
-				w.disp.result <- job()
+				w.disp.result <- job.Run()
 			case <-w.stop:
 				w.stop <- struct{}{}
 				return
@@ -96,7 +96,12 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan strin
 }
 
 // Represents user request, function which should be executed in some worker.
-type Job func() string
+
+type Job interface {
+	GetInput() string
+	Run() string
+}
+
 
 type Pool struct {
 	JobQueue   chan Job
