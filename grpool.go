@@ -6,7 +6,7 @@ import "sync"
 type worker struct {
 	workerPool chan *worker
 	jobChannel chan Job
-	result chan string
+	disp *dispatcher
 	stop       chan struct{}
 }
 
@@ -19,7 +19,7 @@ func (w *worker) start() {
 
 			select {
 			case job = <-w.jobChannel:
-				w.result <- job()
+				w.disp.result <- job()
 			case <-w.stop:
 				w.stop <- struct{}{}
 				return
@@ -28,10 +28,11 @@ func (w *worker) start() {
 	}()
 }
 
-func newWorker(pool chan *worker) *worker {
+func newWorker(pool chan *worker, disp *dispatcher) *worker {
 	return &worker{
 		workerPool: pool,
 		jobChannel: make(chan Job),
+		disp:	    disp,
 		stop:       make(chan struct{}),
 	}
 }
@@ -40,15 +41,25 @@ func newWorker(pool chan *worker) *worker {
 type dispatcher struct {
 	workerPool chan *worker
 	jobQueue   chan Job
+	result     chan string
 	stop       chan struct{}
 }
-
+func (d *dispatcher) collect() {
+	for {
+		select {
+		case st := <- d.result:
+			fmt.Println(st)	
+		}
+	}
+}
 func (d *dispatcher) dispatch() {
 	for {
 		select {
 		case job := <-d.jobQueue:
 			worker := <-d.workerPool
 			worker.jobChannel <- job
+		case  rs := <-d.result:
+			fmt.Println(rs)
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
@@ -63,19 +74,21 @@ func (d *dispatcher) dispatch() {
 	}
 }
 
-func newDispatcher(workerPool chan *worker, jobQueue chan Job) *dispatcher {
+func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan string) *dispatcher {
 	d := &dispatcher{
 		workerPool: workerPool,
 		jobQueue:   jobQueue,
+		result:	result,
 		stop:       make(chan struct{}),
 	}
 
 	for i := 0; i < cap(d.workerPool); i++ {
-		worker := newWorker(d.workerPool)
+		worker := newWorker(d.workerPool,d)
 		worker.start()
 	}
 
 	go d.dispatch()
+	go d.collect()
 	return d
 }
 
@@ -96,10 +109,11 @@ type Pool struct {
 func NewPool(numWorkers int, jobQueueLen int) *Pool {
 	jobQueue := make(chan Job, jobQueueLen)
 	workerPool := make(chan *worker, numWorkers)
-
+	result := make(chan string, jobQueueLen)
+	
 	pool := &Pool{
 		JobQueue:   jobQueue,
-		dispatcher: newDispatcher(workerPool, jobQueue),
+		dispatcher: newDispatcher(workerPool, jobQueue, result),
 	}
 
 	return pool
