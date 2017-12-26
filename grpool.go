@@ -6,6 +6,7 @@ import "sync"
 type worker struct {
 	workerPool chan *worker
 	jobChannel chan Job
+	result chan string
 	stop       chan struct{}
 }
 
@@ -18,7 +19,7 @@ func (w *worker) start() {
 
 			select {
 			case job = <-w.jobChannel:
-				job()
+				w.result <- job()
 			case <-w.stop:
 				w.stop <- struct{}{}
 				return
@@ -79,7 +80,7 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job) *dispatcher {
 }
 
 // Represents user request, function which should be executed in some worker.
-type Job interface{}
+type Job func() string
 
 type Pool struct {
 	JobQueue   chan Job
