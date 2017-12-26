@@ -1,6 +1,9 @@
 package grpool
 
-import "sync"
+import (
+	"sync"
+	"fmt"
+)
 
 // Gorouting instance which can accept client jobs
 type worker struct {
