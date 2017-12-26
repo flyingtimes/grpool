@@ -79,7 +79,7 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job) *dispatcher {
 }
 
 // Represents user request, function which should be executed in some worker.
-type Job func()
+type Job interface{}
 
 type Pool struct {
 	JobQueue   chan Job
