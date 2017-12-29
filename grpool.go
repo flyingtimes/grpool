@@ -44,7 +44,7 @@ func newWorker(pool chan *worker, disp *dispatcher) *worker {
 type dispatcher struct {
 	workerPool chan *worker
 	jobQueue   chan Job
-	result     chan string
+	result     chan interface{}
 	stop       chan struct{}
 }
 func (d *dispatcher) collect() {
