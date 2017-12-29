@@ -107,7 +107,7 @@ func (self *Job) SetCallback(fun Callback,args...interface{} ){
         self.Callback =fun
         self.CallbackArgs =args
 }
-func (self *Job) Run() string{
+func (self *Job) Run() interface{}{
         return self.Callback(self.CallbackArgs)
 }
 
