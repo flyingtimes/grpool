@@ -77,7 +77,7 @@ func (d *dispatcher) dispatch() {
 	}
 }
 
-func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan string) *dispatcher {
+func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan interface{}) *dispatcher {
 	d := &dispatcher{
 		workerPool: workerPool,
 		jobQueue:   jobQueue,
@@ -126,7 +126,7 @@ type Pool struct {
 func NewPool(numWorkers int, jobQueueLen int) *Pool {
 	jobQueue := make(chan Job, jobQueueLen)
 	workerPool := make(chan *worker, numWorkers)
-	result := make(chan string, jobQueueLen)
+	result := make(chan interface{}, jobQueueLen)
 	
 	pool := &Pool{
 		JobQueue:   jobQueue,
