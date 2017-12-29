@@ -102,7 +102,7 @@ type Job struct {
         Callback Callback
         CallbackArgs interface{}
 }
-type Callback func(args ...interface{}) string
+type Callback func(args ...interface{}) interface{}
 func (self *Job) SetCallback(fun Callback,args...interface{} ){
         self.Callback =fun
         self.CallbackArgs =args
