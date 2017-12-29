@@ -97,9 +97,18 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan strin
 
 // Represents user request, function which should be executed in some worker.
 
-type Job interface {
-	GetInput() string
-	Run() string
+
+type Job struct {
+        Callback Callback
+        CallbackArgs interface{}
+}
+type Callback func(args ...interface{})
+func (self *Job) SetCallback(fun Callback,args...interface{} ){
+        self.Callback :=fun
+        self.CallbackArgs :=args
+}
+func (self *Job) Run(){
+        self.Callback(CallbackArgs)
 }
 
 
