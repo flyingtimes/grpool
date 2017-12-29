@@ -102,13 +102,13 @@ type Job struct {
         Callback Callback
         CallbackArgs interface{}
 }
-type Callback func(args ...interface{})
+type Callback func(args ...interface{}) interface{}
 func (self *Job) SetCallback(fun Callback,args...interface{} ){
-        self.Callback :=fun
-        self.CallbackArgs :=args
+        self.Callback =fun
+        self.CallbackArgs =args
 }
-func (self *Job) Run(){
-        self.Callback(CallbackArgs)
+func (self *Job) Run() string{
+        return self.Callback(CallbackArgs)
 }
 
 
