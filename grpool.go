@@ -64,7 +64,7 @@ func (d *dispatcher) dispatch() {
 		case job := <-d.jobQueue:
 			worker := <-d.workerPool
 			worker.jobChannel <- job
-			fmt.Println("job channel:",len(worker.jobChannel))
+			fmt.Println("job channel:",len(d.workPool))
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
