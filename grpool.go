@@ -23,6 +23,7 @@ func (w *worker) start() {
 			select {
 			case job = <-w.jobChannel:
 				w.disp.result <- job.Run()
+				w.disp.wg.Done()
 			case <-w.stop:
 				w.stop <- struct{}{}
 				return
@@ -46,6 +47,7 @@ type dispatcher struct {
 	jobQueue   chan Job
 	result     chan interface{}
 	stop       chan struct{}
+	wg         sync.WaitGroup
 }
 func (d *dispatcher) collect() {
 	for {
@@ -115,7 +117,6 @@ func (self *Job) Run() interface{}{
 type Pool struct {
 	JobQueue   chan Job
 	dispatcher *dispatcher
-	wg         sync.WaitGroup
 }
 
 // Will make pool of gorouting workers.
@@ -140,19 +141,17 @@ func NewPool(numWorkers int, jobQueueLen int) *Pool {
 // every time your job is done.
 //
 // If you are not using WaitAll then we assume you have your own way of synchronizing.
-func (p *Pool) JobDone() {
-	p.wg.Done()
-}
+
 
 // How many jobs we should wait when calling WaitAll.
 // It is using WaitGroup Add/Done/Wait
 func (p *Pool) WaitCount(count int) {
-	p.wg.Add(count)
+	p.dispatcher.wg.Add(count)
 }
 
 // Will wait for all jobs to finish.
 func (p *Pool) WaitAll() {
-	p.wg.Wait()
+	p.dispatcher.wg.Wait()
 }
 
 // Will release resources used by pool
