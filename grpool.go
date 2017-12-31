@@ -2,7 +2,6 @@ package grpool
 
 import (
 	"sync"
-	"fmt"
 )
 
 // Gorouting instance which can accept client jobs
