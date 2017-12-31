@@ -48,6 +48,8 @@ type dispatcher struct {
 	result     chan interface{}
 	stop       chan struct{}
 	wg         sync.WaitGroup
+	CollectorCallback Callback
+        ColletorArgs []interface{}
 }
 func (d *dispatcher) collect() {
 	for {
@@ -64,7 +66,7 @@ func (d *dispatcher) dispatch() {
 			worker := <-d.workerPool
 			worker.jobChannel <- job
 		case  rs := <-d.result:
-			fmt.Println(rs)
+			self.CollectorCallback(self.ColletorArgs)
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
@@ -105,10 +107,17 @@ type Job struct {
         CallbackArgs []interface{}
 }
 type Callback func(args []interface{}) interface{}
-func (self *Job) SetCallback(fun Callback,args...interface{} ){
+
+func (self *Job) SetWorkerFunc(fun Callback,args...interface{} ){
         self.Callback =fun
         self.CallbackArgs =args
 }
+
+func (self *Dispatcher) SetColletorFunc(fun Callback,args...interface{} ){
+        self.ColletorCallback =fun
+        self.ColletorArgs =args
+}
+
 func (self *Job) Run() interface{}{
         return self.Callback(self.CallbackArgs)
 }
