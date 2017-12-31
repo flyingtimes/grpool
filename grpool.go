@@ -65,7 +65,7 @@ func (d *dispatcher) dispatch() {
 			worker := <-d.workerPool
 			worker.jobChannel <- job
 		case  rs := <-d.result:
-			self.CollectorCallback(rs)
+			d.CollectorCallback(rs)
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
@@ -112,8 +112,8 @@ func (self *Job) SetWorkerFunc(fun Callback,args...interface{} ){
         self.CallbackArgs =args
 }
 
-func (self *dispatcher) SetColletorFunc(fun Callback,args...interface{} ){
-        self.ColletorCallback =fun
+func (self *dispatcher) SetColletorFunc(fun Callback){
+        self.CollectorCallback =fun
 }
 
 func (self *Job) Run() interface{}{
