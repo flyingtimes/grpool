@@ -35,7 +35,7 @@ func (w *worker) start() {
 
 func newWorker(name string,pool chan *worker, disp *dispatcher) *worker {
 	return &worker{
-		name:name
+		name:name,
 		workerPool: pool,
 		jobChannel: make(chan Job),
 		disp:	    disp,
