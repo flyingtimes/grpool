@@ -2,6 +2,7 @@ package grpool
 
 import (
 	"sync"
+	"fmt"
 )
 
 // Gorouting instance which can accept client jobs
@@ -54,6 +55,8 @@ func (d *dispatcher) collect() {
 		select {
 		case st := <- d.result:
 			d.CollectorCallback(st)	
+		default:
+			fmt.Println("channel collect is full")
 		}
 	}
 }
