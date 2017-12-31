@@ -48,7 +48,7 @@ type dispatcher struct {
 	result     chan interface{}
 	stop       chan struct{}
 	wg         sync.WaitGroup
-	CollectorCallback Callback
+	CollectorCallback CollectorCallback
 }
 func (d *dispatcher) collect() {
 	for {
@@ -106,6 +106,7 @@ type Job struct {
         CallbackArgs []interface{}
 }
 type Callback func(args []interface{}) interface{}
+type CollectorCallback func(args interface{}) interface{}
 
 func (self *Job) SetWorkerFunc(fun Callback,args...interface{} ){
         self.Callback =fun
