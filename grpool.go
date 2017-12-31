@@ -113,8 +113,8 @@ func (self *Job) SetWorkerFunc(fun Callback,args...interface{} ){
         self.CallbackArgs =args
 }
 
-func (self *dispatcher) SetColletorFunc(fun CollectorCallback){
-        self.CollectorCallback =fun
+func (self *Pool) SetColletorFunc(fun CollectorCallback){
+        self.dispatcher.CollectorCallback =fun
 }
 
 func (self *Job) Run() interface{}{
