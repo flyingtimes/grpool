@@ -54,7 +54,7 @@ func (d *dispatcher) collect() {
 	for {
 		select {
 		case st := <- d.result:
-			fmt.Println(st)	
+			d.CollectorCallback(st)	
 		}
 	}
 }
@@ -64,8 +64,6 @@ func (d *dispatcher) dispatch() {
 		case job := <-d.jobQueue:
 			worker := <-d.workerPool
 			worker.jobChannel <- job
-		case  rs := <-d.result:
-			d.CollectorCallback(rs)
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
