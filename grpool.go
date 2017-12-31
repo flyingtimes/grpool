@@ -112,7 +112,7 @@ func (self *Job) SetWorkerFunc(fun Callback,args...interface{} ){
         self.CallbackArgs =args
 }
 
-func (self *Dispatcher) SetColletorFunc(fun Callback,args...interface{} ){
+func (self *dispatcher) SetColletorFunc(fun Callback,args...interface{} ){
         self.ColletorCallback =fun
 }
 
