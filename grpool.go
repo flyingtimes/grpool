@@ -54,9 +54,8 @@ func (d *dispatcher) collect() {
 	for {
 		select {
 		case st := <- d.result:
+			fmt.Println(len(d.result))
 			d.CollectorCallback(st)	
-		default:
-			fmt.Println("channel collect is full")
 		}
 	}
 }
