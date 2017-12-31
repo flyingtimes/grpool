@@ -7,6 +7,7 @@ import (
 
 // Gorouting instance which can accept client jobs
 type worker struct {
+	name string
 	workerPool chan *worker
 	jobChannel chan Job
 	disp *dispatcher
@@ -32,8 +33,9 @@ func (w *worker) start() {
 	}()
 }
 
-func newWorker(pool chan *worker, disp *dispatcher) *worker {
+func newWorker(name string,pool chan *worker, disp *dispatcher) *worker {
 	return &worker{
+		name:name
 		workerPool: pool,
 		jobChannel: make(chan Job),
 		disp:	    disp,
@@ -64,7 +66,7 @@ func (d *dispatcher) dispatch() {
 		case job := <-d.jobQueue:
 			worker := <-d.workerPool
 			worker.jobChannel <- job
-			fmt.Println("job channel:",len(d.workerPool))
+			fmt.Println(worker.name," job channel:",len(d.workerPool))
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
@@ -88,7 +90,7 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan inter
 	}
 
 	for i := 0; i < cap(d.workerPool); i++ {
-		worker := newWorker(d.workerPool,d)
+		worker := newWorker(strconv.Itoa(i),d.workerPool,d)
 		worker.start()
 	}
 
