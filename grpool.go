@@ -25,7 +25,7 @@ func (w *worker) start() {
 			select {
 			case job = <-w.jobChannel:
 				w.disp.result <- job.Run()
-				w.disp.wg.Done()
+				//w.disp.wg.Done()
 			case <-w.stop:
 				w.stop <- struct{}{}
 				return
