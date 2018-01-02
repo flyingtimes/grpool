@@ -55,7 +55,7 @@ type dispatcher struct {
 }
 func (d *dispatcher) collect() {
 	// wait before workers are all setup up.
-	while (len(d.workerPool)==0){
+	for (len(d.workerPool)==0){
 		time.Sleep(time.Second)
 	}
 	
