@@ -82,9 +82,11 @@ func (d *dispatcher) dispatch() {
 			worker.jobChannel <- job
 			//fmt.Println(worker.name," job channel:",len(d.workerPool))
 		case <-d.stop:
+			fmt.Println("dispatcher before worker stop")
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
 				worker.stop <- struct{}{}
+				fmt.Println("worker ",i," stop")
 				<-worker.stop
 			}
 			fmt.Println("dispatcher before collector stop")
