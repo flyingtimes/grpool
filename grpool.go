@@ -190,5 +190,4 @@ func (p *Pool) WaitAll() {
 func (p *Pool) Release() {
 	fmt.Println("release")
 	p.dispatcher.stop <- struct{}{}
-	<-p.dispatcher.stop
 }
