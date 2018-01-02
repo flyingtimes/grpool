@@ -87,13 +87,12 @@ func (d *dispatcher) dispatch() {
 			fmt.Println("dispatcher before worker stop")
 			fmt.Println("workers:",cap(d.workerPool))
 			for i := 0; i < cap(d.workerPool); i++ {
-				fmt.Println("worker ",i," stop1")
 				worker := <-d.workerPool
-				fmt.Println("worker ",i," stop2")
+				fmt.Println(worker.name," stop1")
 				worker.stop <- struct{}{}
-				fmt.Println("worker ",i," stop3")
+				fmt.Println(worker.name," stop2")
 				<-worker.stop
-				fmt.Println("worker ",i," stopped")
+				fmt.Println(worker.name," stopped")
 			}
 			fmt.Println("dispatcher before collector stop")
 			d.CollectorStop <- struct {}{}
