@@ -24,9 +24,9 @@ func (w *worker) start() {
 			w.workerPool <- w
 			select {
 			case job = <-w.jobChannel:
-				fmt.Println("worker",w.name," before run")
+				fmt.Println("worker",w.name," before run ",job.CallbackArgs)
 				w.disp.result <- job.Run()
-				fmt.Println("worker",w.name," after run")
+				fmt.Println("worker",w.name," after run ",job.CallbackArgs)
 				//w.disp.wg.Done()
 			case <-w.stop:
 				w.stop <- struct{}{}
