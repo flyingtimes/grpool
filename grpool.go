@@ -3,6 +3,7 @@ package grpool
 import (
 	"sync"
 	//"fmt"
+	"time"
 	"strconv"
 )
 
@@ -65,7 +66,7 @@ func (d *dispatcher) collect() {
 			if len(d.workerPool)!=0{
 				d.CollectorCallback(st)	
 			}
-		case <- d.collectorStop:
+		case <- d.CollectorStop:
 			break
 			
 		}
