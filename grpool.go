@@ -21,7 +21,6 @@ func (w *worker) start() {
 		for {
 			// worker free, add it to pool
 			w.workerPool <- w
-
 			select {
 			case job = <-w.jobChannel:
 				w.disp.result <- job.Run()
@@ -52,14 +51,25 @@ type dispatcher struct {
 	stop       chan struct{}
 	wg         sync.WaitGroup
 	CollectorCallback CollectorCallback
+	CollectorStop chan struct{}
 }
 func (d *dispatcher) collect() {
+	// wait before workers are all setup up.
+	while len(d.workerPool)==0{
+		time.Sleep(time.Second)
+	}
 	for {
 		select {
 		case st := <- d.result:
-			d.CollectorCallback(st)	
+			if len(d.workerPool)!=0{
+				d.CollectorCallback(st)	
+			}
+		case <- d.collectorStop:
+			break
+			
 		}
 	}
+	d.CollectorStop <- struct {}{}
 }
 func (d *dispatcher) dispatch() {
 	for {
@@ -71,11 +81,10 @@ func (d *dispatcher) dispatch() {
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
-
 				worker.stop <- struct{}{}
 				<-worker.stop
 			}
-
+			d.CollectorStop <- struct {}{}
 			d.stop <- struct{}{}
 			return
 		}
@@ -167,5 +176,6 @@ func (p *Pool) WaitAll() {
 // Will release resources used by pool
 func (p *Pool) Release() {
 	p.dispatcher.stop <- struct{}{}
+	<-p.dispatcher.CollectorStop
 	<-p.dispatcher.stop
 }
