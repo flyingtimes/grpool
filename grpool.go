@@ -83,6 +83,7 @@ func (d *dispatcher) dispatch() {
 			//fmt.Println(worker.name," job channel:",len(d.workerPool))
 		case <-d.stop:
 			fmt.Println("dispatcher before worker stop")
+			fmt.Println("workers:",cap(d.workerPool))
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
 				worker.stop <- struct{}{}
