@@ -177,6 +177,7 @@ func (p *Pool) WaitAll() {
 
 // Will release resources used by pool
 func (p *Pool) Release() {
+	fmt.Println("release")
 	p.dispatcher.stop <- struct{}{}
 	<-p.dispatcher.CollectorStop
 	<-p.dispatcher.stop
