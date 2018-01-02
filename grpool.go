@@ -67,6 +67,7 @@ func (d *dispatcher) collect() {
 				d.CollectorCallback(st)	
 			}
 		case <- d.CollectorStop:
+			fmt.Println("collector stop")
 			break
 			
 		}
@@ -86,8 +87,11 @@ func (d *dispatcher) dispatch() {
 				worker.stop <- struct{}{}
 				<-worker.stop
 			}
+			fmt.Println("dispatcher before collector stop")
 			d.CollectorStop <- struct {}{}
+			fmt.Println("dispatcher after collector stop")
 			d.stop <- struct{}{}
+			fmt.Println("dispatcher after whole stop")
 			return
 		}
 	}
