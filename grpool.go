@@ -64,17 +64,17 @@ func (d *dispatcher) collect() {
 	
 	for {
 		select {
-		case st := <- d.result:
+		case st := <-d.result:
 			if len(d.workerPool)!=0{
 				d.CollectorCallback(st)	
 			}
-		case <- d.CollectorStop:
+		case <-d.CollectorStop:
 			fmt.Println("collector stop")
 			break
 			
 		}
 	}
-	d.CollectorStop <- struct {}{}
+	d.CollectorStop <-struct {}{}
 }
 func (d *dispatcher) dispatch() {
 	for {
@@ -89,16 +89,16 @@ func (d *dispatcher) dispatch() {
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
 				fmt.Println(worker.name," stop1")
-				worker.stop <- struct{}{}
+				worker.stop <-struct{}{}
 				fmt.Println(worker.name," stop2")
 				<-worker.stop
 				fmt.Println(worker.name," stopped")
 			}
 			fmt.Println("dispatcher before collector stop")
 			fmt.Println(cap(d.CollectorStop))
-			d.CollectorStop <- struct{}{}
+			d.CollectorStop <-struct{}{}
 			fmt.Println("dispatcher after collector stop")
-			d.stop <- struct{}{}
+			d.stop <-struct{}{}
 			fmt.Println("dispatcher after whole stop")
 			return
 		}
