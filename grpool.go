@@ -95,6 +95,8 @@ func (d *dispatcher) dispatch() {
 				fmt.Println(worker.name," stopped")
 			}
 			fmt.Println("dispatcher before collector stop")
+			fmt.Println(cap(d.CollectorStop))
+			fmt.Println("dispatcher before collector stop")
 			d.CollectorStop <- struct {}{}
 			fmt.Println("dispatcher after collector stop")
 			d.stop <- struct{}{}
