@@ -74,7 +74,6 @@ func (d *dispatcher) collect() {
 			
 		}
 	}
-	d.CollectorStop <-struct {}{}
 }
 func (d *dispatcher) dispatch() {
 	for {
@@ -187,5 +186,4 @@ func (p *Pool) WaitAll() {
 func (p *Pool) Release() {
 	fmt.Println("release")
 	p.dispatcher.stop <- struct{}{}
-	<- p.dispatcher.CollectorStop
 }
