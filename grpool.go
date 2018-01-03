@@ -70,7 +70,7 @@ func (d *dispatcher) collect() {
 			}
 		case <-d.CollectorStop:
 			fmt.Println("collector stop")
-			break
+			return
 			
 		}
 	}
