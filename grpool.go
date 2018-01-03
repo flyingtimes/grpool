@@ -96,8 +96,6 @@ func (d *dispatcher) dispatch() {
 			fmt.Println(cap(d.CollectorStop))
 			d.CollectorStop <-struct{}{}
 			fmt.Println("dispatcher after collector stop")
-			d.stop <-struct{}{}
-			fmt.Println("dispatcher after whole stop")
 			return
 		}
 	}
