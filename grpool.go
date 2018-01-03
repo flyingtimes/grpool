@@ -85,7 +85,6 @@ func (d *dispatcher) dispatch() {
 				worker.stop <-struct{}{}
 				<-worker.stop
 			}
-			fmt.Println(cap(d.CollectorStop))
 			d.CollectorStop <-struct{}{}
 			return
 		}
