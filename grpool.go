@@ -2,7 +2,7 @@ package grpool
 
 import (
 	"sync"
-	"fmt"
+	//"fmt"
 	"time"
 	"strconv"
 )
@@ -24,9 +24,7 @@ func (w *worker) start() {
 			w.workerPool <- w
 			select {
 			case job = <-w.jobChannel:
-				fmt.Println("worker",w.name," before run ",job.CallbackArgs)
 				w.disp.result <- job.Run()
-				fmt.Println("worker",w.name," after run ",job.CallbackArgs)
 				//w.disp.wg.Done()
 			case <-w.stop:
 				w.stop <- struct{}{}
@@ -69,7 +67,6 @@ func (d *dispatcher) collect() {
 				d.CollectorCallback(st)	
 			}
 		case <-d.CollectorStop:
-			fmt.Println("collector stop")
 			d.stop <- struct{}{}
 			return
 			
@@ -82,20 +79,14 @@ func (d *dispatcher) dispatch() {
 		case job := <-d.jobQueue:
 			worker := <-d.workerPool
 			worker.jobChannel <- job
-			//fmt.Println(worker.name," job channel:",len(d.workerPool))
 		case <-d.stop:
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
-				fmt.Println(worker.name," stop1")
 				worker.stop <-struct{}{}
-				fmt.Println(worker.name," stop2")
 				<-worker.stop
-				fmt.Println(worker.name," stopped")
 			}
-			fmt.Println("dispatcher before collector stop")
 			fmt.Println(cap(d.CollectorStop))
 			d.CollectorStop <-struct{}{}
-			fmt.Println("dispatcher after collector stop")
 			return
 		}
 	}
@@ -185,7 +176,6 @@ func (p *Pool) WaitAll() {
 
 // Will release resources used by pool
 func (p *Pool) Release() {
-	fmt.Println("release")
 	p.dispatcher.stop <- struct{}{}
 	<- p.dispatcher.stop
 }
