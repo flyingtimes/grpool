@@ -70,6 +70,7 @@ func (d *dispatcher) collect() {
 			}
 		case <-d.CollectorStop:
 			fmt.Println("collector stop")
+			d.stop <- struct{}{}
 			return
 			
 		}
@@ -186,4 +187,5 @@ func (p *Pool) WaitAll() {
 func (p *Pool) Release() {
 	fmt.Println("release")
 	p.dispatcher.stop <- struct{}{}
+	<- p.dispatcher.stop
 }
