@@ -117,9 +117,8 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan inter
 		worker := newWorker(strconv.Itoa(i),d.workerPool,d)
 		worker.start()
 	}
-
-	go d.dispatch()
 	go d.collect()
+	go d.dispatch()
 	return d
 }
 
