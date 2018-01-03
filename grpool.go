@@ -84,8 +84,6 @@ func (d *dispatcher) dispatch() {
 			worker.jobChannel <- job
 			//fmt.Println(worker.name," job channel:",len(d.workerPool))
 		case <-d.stop:
-			fmt.Println("dispatcher before worker stop")
-			fmt.Println("workers:",cap(d.workerPool))
 			for i := 0; i < cap(d.workerPool); i++ {
 				worker := <-d.workerPool
 				fmt.Println(worker.name," stop1")
@@ -111,6 +109,7 @@ func newDispatcher(workerPool chan *worker, jobQueue chan Job, result chan inter
 		jobQueue:   jobQueue,
 		result:	result,
 		stop:       make(chan struct{}),
+		CollectorStop:make(chan struct{}),
 	}
 
 	for i := 0; i < cap(d.workerPool); i++ {
